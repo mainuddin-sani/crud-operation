@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-const Adduser = () => {
-    const addeUserHandler = (e)=>{
+const Update = () => {
+    const {id} = useParams();
+    const [user, setUser] = useState({});
+    
+    useEffect(()=>{
+        fetch(`http://localhost:5000/user/${id}`)
+        .then(res=>res.json())
+        .then(data=>setUser(data));
+    },[])
+
+    const uppdateUserHandler = (e)=>{
         e.preventDefault();
         const name = e.target.name.value;
         const email = e.target.email.value;
         const user = {name,email};
 
         // send data to the server
-        fetch('http://localhost:5000/user', {
-            method: 'POST',
+        const url = `http://localhost:5000/user/${id}`;
+        fetch(url, {
+            method: 'PUT',
             headers: { 
                 'content-type': 'application/json',
             },
@@ -17,6 +28,7 @@ const Adduser = () => {
         })
         .then(res=>res.json())
         .then(data=>{
+            
             console.log('success', data)
             alert('users added succeassfully!!');
             e.target.reset();
@@ -24,9 +36,9 @@ const Adduser = () => {
     }
     return (
         <div>
-            <h1>Add User</h1>
+            user id : {user.name};
 
-            <form action="" onSubmit={addeUserHandler}>
+            <form action="" onSubmit={uppdateUserHandler}>
                 <input type="text" placeholder='name' name='name' required />
                 <br />
                 <input type="email" placeholder='email' name='email' required/>
@@ -37,4 +49,4 @@ const Adduser = () => {
     );
 };
 
-export default Adduser;
+export default Update;
